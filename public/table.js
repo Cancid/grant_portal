@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', function() {
     async function getTable() {
       const response = await fetch('/table');
       const data = await response.json();
-      console.log(data);
     
       const tbod = document.getElementById("tbod");
       idNum = 0;
@@ -21,15 +20,12 @@ document.addEventListener('DOMContentLoaded', function() {
         
         };
 
-        console.log(ele);
-
         Object.values(ele).forEach(makeRows);  
         tbod.appendChild(row);
 
         const curId = ele.rowid;
 
         const today = new Date()
-        console.log(today)
         let date = new Date(ele.due_date)
         const daysLeft = Math.round(Math.abs(date - today)/(1000 * 3600 *24))
         if (daysLeft <= 4) {
@@ -47,7 +43,6 @@ document.addEventListener('DOMContentLoaded', function() {
         
 
         row.addEventListener("click", function(){
-            console.log(curId);
             window.location.href = `http://localhost:3000/?grantid=${curId}`
         
         
@@ -74,10 +69,11 @@ document.addEventListener('DOMContentLoaded', function() {
             th.classList.add('headerSortDown')
             th.classList.remove('headerSortUp');
         };
-
+        
         const table = th.closest('table');
         Array.from(table.querySelectorAll('tr:nth-child(n+2)'))
             .sort(comparer(Array.from(th.parentNode.children).indexOf(th), this.asc = !this.asc))
-            .forEach(tr => table.appendChild(tr) );
+            .forEach(tr => table.appendChild(tr));
+        
     })));
 });

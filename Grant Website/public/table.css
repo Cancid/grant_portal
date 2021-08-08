@@ -1,0 +1,30 @@
+table thead tr th {
+    text-align: left;
+    position: sticky;
+    top: 0px;
+    background-color: rgb(255, 255, 255);
+    color: rgb(0, 0, 0);
+  }
+
+.headerSortDown:after,
+.headerSortUp:after {
+  content: ' ';
+  position: relative;
+  left: 2px;
+  border: 8px solid transparent;
+}
+
+.headerSortDown:after {
+  top: 10px;
+  border-top-color: silver;
+}
+
+.headerSortUp:after {
+  bottom: 15px;
+  border-bottom-color: silver;
+}
+
+.headerSortDown,
+.headerSortUp {
+  padding-right: 10px;
+}

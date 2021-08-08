@@ -1,0 +1,16 @@
+{
+  "name": "grant_portal",
+  "version": "1.0.0",
+  "description": "Portal for adding, editing, and viewing grants",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cancid/Grant-Portal.git"
+    },
+  "author": "Evan Hale",
+  "license": "MIT"
+}

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <title>OCP Grants</title>
+  </head>
+  
+  <body>
+
+    <div class="container">
+
+      <div class="row">
+        <h1>New Grant</h1>
+        <div class="input-field col s6">
+          <input id="name" type="text" class="validate" required>
+          <label for="name">Grant Title</label>
+        </div>
+        <div class="input-field col s2">
+          <select id="status" onchange="displayOption(this);">
+            <option value="" disabled selected>Grant status</option>
+            <option value="Recieved">Recieved</option>
+          </select>
+          <label for="status">Grant Status</label>
+        </div>
+          
+
+      </div> <!--CLOSE ROW --> 
+
+      <div class="row">
+        <div class="input-field col s2">
+          <input id="duration" type="text">
+          <label for="duration">Duration (in months)</label>
+        </div>
+        <div class="input-field col s2">
+          <input id="amountreq" type="text" class="validate" required pattern="^[1-9]\d*(\.\d+)?$">
+          <label for="amountreq">Amount Requested</label>
+        </div>
+        <div id="rec" style="display: none;" class="input-field col s2">
+          <input id="amountrec" type="text" class="" pattern="^[1-9]\d*(\.\d+)?$">
+          <label for="amountrec">Amount Received</label>
+        </div>
+        
+      </div> <!-- CLOSE ROW -->
+
+      <div class="row">
+        <div id="repdue" class="input-field col s2" style="display: block">
+           <input id="duedate" type="text" class="datepicker">
+           <label for="duedate">Due Date</label>
+        </div>
+        <div id="finalrep" class="input-field col s2" style="display: none">
+          <input id="final" type="text" class="datepicker">
+          <label for="final">Final Report Due Date</label>
+        </div>
+        <div id="intcheck" style="display: none;" class="input-field col s2" checked="false">
+          <p>
+            <label>
+              <input type="checkbox" onchange="displayCheck(this, 'interim');">
+              <span>Interim Report</span>
+            </label>
+          </p>
+        </div>
+        <div id="interim" style="display: none" class="input-field col s2">
+            <input id="intdate" type="text" class="datepicker">
+            <label for="intdate">Interim Report Due Date</label>
+        </div>
+        
+        
+      </div> <!-- CLOSE ROW -->  
+
+        <h4>Additional Information</h4>
+        <div class="row">
+          <div class="input-field col s6">
+          <form action="#">
+              <div class="file-field input-field">
+                <div class="btn">
+                  <span>File</span>
+                  <input type="file" multiple>
+                </div>
+                <div class="file-path-wrapper">
+                  <input class="file-path validate" type="text" placeholder="Upload one or more files">
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="input-field col s9">
+            <textarea id="notes" class="materialize-textarea" data-length="240"></textarea>
+            <label for="notes">Additional Notes</label>
+          </div>
+  
+        </div> <!-- CLOSE ROW -->
+
+        <div class="row">
+        <button id="btn" class="btn waves-effect waves-light blue darken-3" type="submit" name="action">Submit<i class="material-icons right">send</i></button>
+      </div> <!-- CLOSE ROW -->
+    
+    </div> <!-- CLOSE CONTAINER -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="/index.js"></script>
+  </body>
+</html>

@@ -15,8 +15,8 @@ document.addEventListener('DOMContentLoaded', function() {
   const instances = M.FormSelect.init(selectBoxes);
   const datePicker = document.querySelectorAll('.datepicker');
   const dateInstances = M.Datepicker.init(datePicker, {minDate: new Date(), format: 'mm/dd/yyyy'});
+  M.updateTextFields();
   document.getElementById("btn").addEventListener("click", btnClickAct);
-
 
   getOptions()
   async function getOptions() {
@@ -39,35 +39,46 @@ document.addEventListener('DOMContentLoaded', function() {
   const urlQuery = window.location.search;
   const urlParams = new URLSearchParams(urlQuery);
   if (urlParams.has('grantid')) {
+
     grantid = urlParams.get('grantid');
     getGrant()
+
     async function getGrant() {
       const response = await fetch(`/grant/${grantid}`, {
         method: 'get'
       });
-    const data = await response.json();
-    console.log(data);
-    title.value = data.grant;
-    setSelection(status, data.status)
-    console.log(status)
-    function setSelection (s, valsearch) {
-      for (i = 0; i < s.options.length; i++) {
-        console.log(s.options[i])
-        if (s.options[i].value === valsearch){
-          s.options[i].selected = true;
-          console.log(s)
-          break;
+      const data = await response.json();
+      console.log(data);
+      document.getElementById('granttype').innerText = 'Edit Grant'
+      title.value = data.grant;
+      setSelection(status, data.status)
+      console.log(status)
+
+      function setSelection (s, valsearch) {
+        for (i = 0; i < s.options.length; i++) {
+          console.log(s.options[i])
+          if (s.options[i].value === valsearch){
+            s.options[i].selected = true;
+            if (status.value === 'Recieved'){
+              displayCheck(document.getElementById('intcheck'), 'interim');
+                displayOption(document.getElementById('status'));
+                document.getElementById('intcheckbox').setAttribute('checked', 'checked');
+            };  
+            console.log(s)
+            break;
+          };
         };
       };
-    };
-    dueDate.value = data.due_date;
-    amountReq.value = data.amount_requested;
-    amountRec.value = data.amount_received;
-    duration.value = data.duration;
-    finalRep.value = data.final_report;
-    intDate.value = data.interim_report;
-    M.updateTextFields();
-    };
+
+      dueDate.value = data.due_date;
+      amountReq.value = data.amount_requested;
+      amountRec.value = data.amount_received;
+      duration.value = data.duration;
+      finalRep.value = data.final_report;
+      intDate.value = data.interim_report;
+      M.updateTextFields();
+      M.FormSelect.init(selectBoxes);
+      };
   };
 
   
@@ -140,7 +151,7 @@ function displayOption(that) {
     
     if (intCheck.getAttribute("checked") === "true") {
       interim.style.display = "block";
-      intcheck.className = "input-field col s2 push-s2"
+      intcheck.className = "input-field col s6 l3 push-l3"
     };
     repDue.style.display = "none";
 
@@ -152,7 +163,7 @@ function displayOption(that) {
 
     if (interim.style.display = "block") {
       interim.style.display = "none"
-      intCheck.className = "input-field col s2"
+      intCheck.className = "input-field col s6 l3"
     };
     
   };
@@ -164,13 +175,14 @@ function displayCheck(that, id) {
 
     if (el.style.display == "none") {
       el.style.display = "block";
-      el.className = "input-field col s2 pull-s2"
-      intcheck.className = "input-field col s2 push-s2"
+      el.className = "input-field col s6 l3 pull-l3"
+      intcheck.className = "input-field col s6 l3 push-l3"
       intcheck.setAttribute("checked", "true")
 
     } else {
       el.style.display = "none";
-      intcheck.className = "input-field col s2"
+      intcheck.className = "input-field col s6 l3"
       intcheck.setAttribute("checked", "false")
+      
     };
 };

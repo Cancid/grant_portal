@@ -54,26 +54,49 @@ document.addEventListener('DOMContentLoaded', function() {
 
     };
 
+    // TODO: Delete arrow when sort other column, set th.asc to false
     //Sorting code
     const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
-    const comparer = (idx, asc) => (a, b) => ((v1, v2) => 
-        v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ? v1 - v2 : v1.toString().localeCompare(v2)
-        )(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
+    const sortNumOrString = (v1, v2) => v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ? v1 - v2 : v1.toString().localeCompare(v2)
+    function comparer (idx, asc) {
+      return (a, b) => (sortNumOrString(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx)));
+    };
 
     // do the work...
     document.querySelectorAll('th').forEach(th => th.addEventListener('click', (() => {
+        columns = document.querySelectorAll('th');
+        columns.forEach(otherHeader => {
+
+          if (otherHeader.classList.contains('headerSortDown') ||
+           otherHeader.classList.contains('headerSortUp') && otherHeader !== th){
+
+            otherHeader.asc = false;
+            otherHeader.className = "";
+
+          };
+        });
+
+
         if (th.classList.contains('headerSortDown') || th.classList.length === 0) {
-            th.classList.add('headerSortUp');
-            th.classList.remove('headerSortDown');
+          th.classList.add('headerSortUp');
+          th.classList.remove('headerSortDown');
+          th.asc = false;
+
         } else {
-            th.classList.add('headerSortDown')
-            th.classList.remove('headerSortUp');
+          th.classList.add('headerSortDown');
+          th.classList.remove('headerSortUp');
+
         };
         
+
+
         const table = th.closest('table');
+        const tableRowIndex = Array.from(th.parentNode.children).indexOf(th)
         Array.from(table.querySelectorAll('tr:nth-child(n+2)'))
-            .sort(comparer(Array.from(th.parentNode.children).indexOf(th), this.asc = !this.asc))
+            .sort(comparer(tableRowIndex, th.asc = !th.asc))
             .forEach(tr => table.appendChild(tr));
+
+        
         
     })));
 });

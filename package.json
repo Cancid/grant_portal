@@ -4,13 +4,32 @@
   "description": "Portal for adding, editing, and viewing grants",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "devStart": "nodemon server.js"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/cancid/Grant-Portal.git"
-    },
+    "url": "git+https://github.com/cancid/grant_portal.git"
+  },
   "author": "Evan Hale",
-  "license": "MIT"
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cancid/grant_portal/issues"
+  },
+  "homepage": "https://github.com/cancid/grant_portal#readme",
+  "keywords": [],
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "connect-flash": "^0.1.1",
+    "ejs": "^3.1.6",
+    "express": "^4.17.1",
+    "express-flash": "^0.0.2",
+    "express-session": "^1.17.2",
+    "install": "^0.13.0",
+    "passport": "^0.4.1",
+    "passport-local": "^1.0.0"
+  },
+  "devDependencies": {
+    "dotenv": "^10.0.0",
+    "nodemon": "^2.0.12"
+  }
 }

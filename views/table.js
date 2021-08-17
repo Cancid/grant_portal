@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
            if (daysLeft === 0) {
                 notification.textContent = `${ele.grant} is due today!`
            } else {
-                notification.textContent = `${ele.grant} is due in ${daysLeft} day!`;
+                notification.textContent = `${ele.grant} is due in ${daysLeft} days!`;
            };
            notify.appendChild(notification);
         };
@@ -88,7 +88,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         };
         
-
 
         const table = th.closest('table');
         const tableRowIndex = Array.from(th.parentNode.children).indexOf(th)

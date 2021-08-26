@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
-
+    console.log("I did it!")
     getTable()
     async function getTable() {
-      const response = await fetch('/table');
+      const response = await fetch('/grants/data');
       const data = await response.json();
     
       const tbod = document.getElementById("tbod");

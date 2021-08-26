@@ -1,5 +1,6 @@
 if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config()
+  require('dotenv').config();
+  console.log("Secret:", process.env.SESSION_SECRET)
 }
 
 
@@ -21,7 +22,8 @@ initializePassport(passport,
   id => users.find(user => user.id === id))
 
 const app = express();
-app.set('view-engine', 'ejs')
+app.set('view engine', 'ejs')
+app.engine('html', require('ejs').renderFile);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false}))
 app.use(flash())
@@ -84,7 +86,37 @@ app.get('/api', (request, response) => {
 });
 
 
-app.get('/table', (request, response) => {
+// app.get(function getTable(request, response, next) {
+//   const sql = `SELECT rowid,
+//   COALESCE(title, "") AS grant,
+//   COALESCE(status, "") AS status,
+//   COALESCE(due_date, "") AS due_date,
+//   COALESCE(amount_requested, "") AS amount_requested,
+//   COALESCE(amount_recieved, "") AS amount_received,
+//   COALESCE(duration, "") AS duration,
+//   COALESCE(interim_report, "") AS interim_report,
+//   COALESCE(final_report, "") AS final_report
+//   FROM grants`;
+//   db.all(sql, {}, (err, data) => {
+//     if (err) {
+//     response.end();
+//     console.log("Error retrieving table data.");
+//     return;
+//     } else {
+//     response.json(data);
+//     console.log(data);
+//     };
+//   });
+//   next();
+// });
+
+
+app.get('/grants', (request, response) => {
+  response.render('table');
+});
+
+
+app.get('/grants/data', (request, response) => {
   const sql = `SELECT rowid,
         COALESCE(title, "") AS grant,
         COALESCE(status, "") AS status,
@@ -101,6 +133,7 @@ app.get('/table', (request, response) => {
       console.log("Error retrieving table data.");
       return;
     } else {
+      // response.json(data);
       response.json(data);
       console.log(data);
     };
@@ -133,16 +166,17 @@ app.get(`/grant/:grantid`, (request, response) => {
 });
 
 app.get('/login', (request, response) => {
-  response.render('login.ejs')
+  response.render('login.ejs');
 });
 
 app.get('/register', (request, response) => {
+  response.render("register.ejs");
 
 });
 
 app.post('/login', passport.authenticate('local', {
-  successRedirect: './table.html',
-  failureRedirect:'./login',
+  successRedirect: '/table',
+  failureRedirect:'/login',
   failureFlash: true
 },
 console.log("Authenticating...")))
@@ -156,9 +190,9 @@ app.post('/register', async (request, response) => {
       email: request.body.email,
       password: hashedPassword
     })  
-    response.redirect('login.html')
+    response.redirect('/login')
   } catch {
-    response.redirect('register.html')
+    response.redirect('/register')
   }
   console.log(users)
 });

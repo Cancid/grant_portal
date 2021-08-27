@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    console.log("I did it!")
+    
     getTable()
     async function getTable() {
       const response = await fetch('/grants/data');

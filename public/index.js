@@ -20,7 +20,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
   getOptions()
   async function getOptions() {
-    const response = await fetch('/api');
+    console.log("Fetching Options")
+    const response = await fetch('/options');
     const data = await response.json();
     console.log(data);
 

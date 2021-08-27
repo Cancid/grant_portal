@@ -37,6 +37,7 @@ app.use(passport.session())
 
 
 
+
 let db = new sqlite3.Database('./db/grantstest.db', (err) => {
   if (err) {
     return console.error(err.message);
@@ -70,8 +71,12 @@ app.post('/api/:grantid', (request, response) => {
 });
 
 
+app.get('/', (request, response) => {
+  response.render('index');
+});
 
-app.get('/api', (request, response) => {
+
+app.get('/options', (request, response) => {
   sql = `SELECT * FROM status ORDER BY status`;
   db.all(sql, {}, (err, data) => {
     if (err) {
@@ -200,6 +205,6 @@ app.post('/register', async (request, response) => {
 
 app.listen(3000, () => console.log('listening at 3000'))
 
-app.use(express.static('public'));
+app.use("/public", express.static('public'));
 app.use(express.json({ limit: '1mb' }));
 

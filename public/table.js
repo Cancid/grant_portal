@@ -11,8 +11,9 @@ document.addEventListener('DOMContentLoaded', function() {
         sortButtons.forEach(sortButton=> sortButton.value = "disabled");
       } else {
         sortTag = sortButton.getAttribute('id')
-        //getTable(`${sortTag}`);
+        getTable(`${sortTag}`);
         sortButton.classList.add("red", "lighten-1");
+        sortButtons.forEach(sortButton=> sortButton.value = "disabled");
         sortButton.value = "enabled";
       }
   ;}));
@@ -43,6 +44,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
         Object.values(ele).forEach(makeRows);  
         tbod.appendChild(row);
+        row.addEventListener("click", function(){
+          window.location.href = `http://localhost:3000/?grantid=${ele.rowid}`
+        });
         idNum++;
       };
       return data

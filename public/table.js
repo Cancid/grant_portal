@@ -1,11 +1,32 @@
+let data;
+
 document.addEventListener('DOMContentLoaded', function() {
+  
+    let sortButtons = document.querySelectorAll("button")
+    sortButtons.forEach(sortButton => sortButton.addEventListener("click", () => {
+      sortButtons.forEach(sortButton => {sortButton.classList.remove("red", "lighten-1");   
+      });
+      if (sortButton.value === "enabled") {
+        getTable("all");
+        sortButtons.forEach(sortButton=> sortButton.value = "disabled");
+      } else {
+        sortTag = sortButton.getAttribute('id')
+        //getTable(`${sortTag}`);
+        sortButton.classList.add("red", "lighten-1");
+        sortButton.value = "enabled";
+      }
+  ;}));
     
-    getTable()
-    async function getTable() {
-      const response = await fetch('/grants/data');
-      const data = await response.json();
+    
+    getTable("all").then((data) => setNotifications(data));
+    async function getTable(sortBy) {
+      const response = await fetch(`/grants/data/${sortBy}`)
+      data = await response.json();
     
       const tbod = document.getElementById("tbod");
+      while (tbod.firstChild) {
+        tbod.removeChild(tbod.firstChild)
+      };
       idNum = 0;
       for (ele of data) {
         const row = document.createElement("tr");
@@ -22,11 +43,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
         Object.values(ele).forEach(makeRows);  
         tbod.appendChild(row);
+        idNum++;
+      };
+      return data
+    };
 
-        const curId = ele.rowid;
 
-        const today = new Date()
-        let date = new Date(ele.due_date)
+    function setNotifications(data){
+      console.log(data)
+      const today = new Date()
+      for (grant of data){
+        let curId = grant.rowid;
+        let date = new Date(grant.due_date)
         const daysLeft = Math.round(Math.abs(date - today)/(1000 * 3600 *24))
         if (daysLeft <= 4) {
            const notify =  document.getElementById("notifications");
@@ -40,21 +68,11 @@ document.addEventListener('DOMContentLoaded', function() {
            };
            notify.appendChild(notification);
         };
-        
-
-        row.addEventListener("click", function(){
-            window.location.href = `http://localhost:3000/?grantid=${curId}`
-        
-        
-       
-        //for (ele.due_date)
-        });
-        idNum++;
       };
-
     };
-
-    // TODO: Delete arrow when sort other column, set th.asc to false
+    
+    
+    // TODO: BUG: Have to press the header twice for it to sort first time after each button sort.
     //Sorting code
     const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
     const sortNumOrString = (v1, v2) => v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ? v1 - v2 : v1.toString().localeCompare(v2)
@@ -65,6 +83,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // do the work...
     document.querySelectorAll('th').forEach(th => th.addEventListener('click', (() => {
         columns = document.querySelectorAll('th');
+        console.log(th);
         columns.forEach(otherHeader => {
 
           if (otherHeader.classList.contains('headerSortDown') ||
@@ -89,13 +108,11 @@ document.addEventListener('DOMContentLoaded', function() {
         };
         
 
-        const table = th.closest('table');
+        const table = document.getElementById("tbod");
         const tableRowIndex = Array.from(th.parentNode.children).indexOf(th)
-        Array.from(table.querySelectorAll('tr:nth-child(n+2)'))
+        Array.from(table.querySelectorAll('tr'))
             .sort(comparer(tableRowIndex, th.asc = !th.asc))
-            .forEach(tr => table.appendChild(tr));
-
-        
+            .forEach(tr => table.appendChild(tr));        
         
     })));
 });

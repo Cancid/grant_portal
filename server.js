@@ -16,7 +16,8 @@ const passport = require('passport')
 const flash = require('express-flash')
 const session = require('express-session')
 
-const initializePassport = require('./passport-config')
+const initializePassport = require('./passport-config');
+const e = require('connect-flash');
 initializePassport(passport, 
   email => users.find(user => user.email === email),
   id => users.find(user => user.id === id))
@@ -90,48 +91,40 @@ app.get('/options', (request, response) => {
   });
 });
 
-
-// app.get(function getTable(request, response, next) {
-//   const sql = `SELECT rowid,
-//   COALESCE(title, "") AS grant,
-//   COALESCE(status, "") AS status,
-//   COALESCE(due_date, "") AS due_date,
-//   COALESCE(amount_requested, "") AS amount_requested,
-//   COALESCE(amount_recieved, "") AS amount_received,
-//   COALESCE(duration, "") AS duration,
-//   COALESCE(interim_report, "") AS interim_report,
-//   COALESCE(final_report, "") AS final_report
-//   FROM grants`;
-//   db.all(sql, {}, (err, data) => {
-//     if (err) {
-//     response.end();
-//     console.log("Error retrieving table data.");
-//     return;
-//     } else {
-//     response.json(data);
-//     console.log(data);
-//     };
-//   });
-//   next();
-// });
-
-
 app.get('/grants', (request, response) => {
   response.render('table');
 });
 
 
-app.get('/grants/data', (request, response) => {
-  const sql = `SELECT rowid,
-        COALESCE(title, "") AS grant,
-        COALESCE(status, "") AS status,
-        COALESCE(due_date, "") AS due_date,
-        COALESCE(amount_requested, "") AS amount_requested,
-        COALESCE(amount_recieved, "") AS amount_received,
-        COALESCE(duration, "") AS duration,
-        COALESCE(interim_report, "") AS interim_report,
-        COALESCE(final_report, "") AS final_report
-        FROM grants`;
+app.get('/grants/data/:sortBy', (request, response) => {
+  const sorter = request.params;
+  let sql;
+  if (sorter.sortBy === "received"){ 
+    sql = `SELECT rowid,
+      COALESCE(title, "") AS grant,
+      COALESCE(status, "") AS status,
+      COALESCE(due_date, "") AS due_date,
+      COALESCE(amount_requested, "") AS amount_requested,
+      COALESCE(amount_recieved, "") AS amount_received,
+      COALESCE(duration, "") AS duration,
+      COALESCE(interim_report, "") AS interim_report,
+      COALESCE(final_report, "") AS final_report
+      FROM grants
+      WHERE status='Recieved'`;
+  }
+  else {
+    sql = `SELECT rowid,
+      COALESCE(title, "") AS grant,
+      COALESCE(status, "") AS status,
+      COALESCE(due_date, "") AS due_date,
+      COALESCE(amount_requested, "") AS amount_requested,
+      COALESCE(amount_recieved, "") AS amount_received,
+      COALESCE(duration, "") AS duration,
+      COALESCE(interim_report, "") AS interim_report,
+      COALESCE(final_report, "") AS final_report
+      FROM grants`;
+  };
+  console.log(sql)
   db.all(sql, {}, (err, data) => {
     if (err) {
       response.end();
@@ -180,7 +173,7 @@ app.get('/register', (request, response) => {
 });
 
 app.post('/login', passport.authenticate('local', {
-  successRedirect: '/table',
+  successRedirect: '/grants',
   failureRedirect:'/login',
   failureFlash: true
 },

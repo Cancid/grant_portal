@@ -10,14 +10,14 @@
     </head>
     <body>
         <div class="container">
-            <h1>Login</h1>
-            <% if (messages.error) { %>
-                <%= messages.error %>
-            <% } %>
-            <div class="row">
-                <div class = "col s12">
-                    <div id="notifications" class="collection">
-                    </div>
+            <h1>Login</h1></br>
+            <div class = "row">
+                <div class = "col s6 l2"
+                    <p>
+                        <% if (messages.error) { %>
+                            <%= messages.error %>
+                        <% } %>
+                    </p>
                 </div>
             </div>
             <form action="/login" method="POST">

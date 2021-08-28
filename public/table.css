@@ -28,3 +28,8 @@ table thead tr th {
 .headerSortUp {
   padding-right: 10px;
 }
+
+.font {
+  font-size: 18px !important;
+}
+

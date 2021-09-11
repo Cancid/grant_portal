@@ -5,8 +5,10 @@ require('dotenv').config();
 function initialize(passport, getUserByEmail, getUserById) {
     // TODO: Make login work with DB
     const authenticateUser = async (email, password, done) => {
-        console.log("Authenticating user")
-        const user = getUserByEmail(email)
+        console.log(email)
+        let user = null
+        user = await getUserByEmail(email)
+        console.log(user)
         if (user == null){
             console.log("No user")
             return done(null, false, { message: 'No user with that email'})
@@ -24,9 +26,9 @@ function initialize(passport, getUserByEmail, getUserById) {
         } catch (e) {   
             return done(e)
         };
-    };
+     };
     
-
+    console.log("Passport.use")
     passport.use(new LocalStrategy({ usernameField: 'email' }, authenticateUser));
 
     passport.serializeUser((user, done) => done(null, user.id));

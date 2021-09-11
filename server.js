@@ -15,16 +15,21 @@ const passport = require('passport')
 const flash = require('express-flash')
 const session = require('express-session')
 
-// Init passport with config file
-const initializePassport = require('./passport-config');
-// Call the initialize passport function from passport-config.js
-initializePassport(passport, 
-  email => users.find(user => user.email === email),
-  id => users.find(user => user.id === id))
+// Establish the DB
+let db = new sqlite3.Database('./db/example1.db', (err) => {
+  if (err) {
+    return console.error(err.message);
+  };
+  console.log('Connected to the in-memory SQlite database.');
+});
+
 
 const app = express();
+// Set view engine to ejs 
 app.set('view engine', 'ejs')
 app.engine('html', require('ejs').renderFile);
+
+//Use Statements
 app.use(express.json());
 app.use(express.urlencoded({ extended: false}))
 app.use(flash())
@@ -37,15 +42,44 @@ app.use(passport.initialize())
 app.use(passport.session())
 
 
+// Init passport with config file
+const initializePassport = require('./passport-config');
+// Call the initialize passport function from passport-config.js
 
-let db = new sqlite3.Database('./db/example1.db', (err) => {
-  if (err) {
-    return console.error(err.message);
+async function getUser(email) {
+  console.log("ran function")
+  let sql = `SELECT email, password FROM users WHERE email = "${email}"`;
+  let returnRows = null;
+  return new Promise(function(res, rej){
+    db.all(sql, [], (err, rows) => {
+      if (err) {
+        return rej(err);
+      }
+      console.log("Query")
+      db.close();
+      res(rows[0]);
+    })});
   };
-  console.log('Connected to the in-memory SQlite database.');
-});
+ 
 
 
+//   db.all(sql, [], (err, rows) => {
+//     if (err) {
+//       throw err;
+//     };
+//     console.log("Data:", rows)
+//     returnRows = rows
+//     });
+//     return returnRows;
+// };
+
+initializePassport(passport, 
+  email => getUser(email),
+  id => users.find(user => user.id === id))
+
+
+
+// If new grant, insert it into the table, if editing a current grant, update that grant
 app.post('/api/:grantid', (req, res) => {
   const params = req.params
   console.log(params);
@@ -75,7 +109,7 @@ app.get('/', (req, res) => {
   res.render('index');
 });
 
-
+// Render the dropdown option on the grant form 
 app.get('/options', (req, res) => {
   sql = `SELECT * FROM status ORDER BY status`;
   db.all(sql, {}, (err, data) => {

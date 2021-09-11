@@ -4,16 +4,16 @@ document.addEventListener('DOMContentLoaded', function() {
   
     let sortButtons = document.querySelectorAll("button")
     sortButtons.forEach(sortButton => sortButton.addEventListener("click", () => {
-      sortButtons.forEach(sortButton => {sortButton.classList.remove("red", "lighten-1");   
+      sortButtons.forEach(sortButton => { sortButton.classList.remove("red", "lighten-1");   
       });
       if (sortButton.value === "enabled") {
         getTable("all");
-        sortButtons.forEach(sortButton=> sortButton.value = "disabled");
+        sortButtons.forEach(sortButton => sortButton.value = "disabled");
       } else {
         sortTag = sortButton.getAttribute('id')
         getTable(`${sortTag}`);
         sortButton.classList.add("red", "lighten-1");
-        sortButtons.forEach(sortButton=> sortButton.value = "disabled");
+        sortButtons.forEach(sortButton => sortButton.value = "disabled");
         sortButton.value = "enabled";
       }
   ;}));
@@ -47,11 +47,14 @@ document.addEventListener('DOMContentLoaded', function() {
         row.addEventListener("click", function(){
           window.location.href = `http://localhost:3000/?grantid=${ele.rowid}`
         });
-        idNum++;
-      };
-      return data
-    };
 
+        idNum++;
+
+      };
+
+      return data
+      
+    };
 
     function setNotifications(data){
       console.log(data)

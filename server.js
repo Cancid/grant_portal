@@ -1,23 +1,23 @@
+// If not in production require env variables
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config();
   console.log("Secret:", process.env.SESSION_SECRET)
 }
 
-
+//Place holder user list till database setup
 const users = [];
 
-
-const { request, response } = require('express');
+// Requirments
 const express = require('express'); 
-const { Database } = require('sqlite3');
 const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcrypt');
 const passport = require('passport')
 const flash = require('express-flash')
 const session = require('express-session')
 
+// Init passport with config file
 const initializePassport = require('./passport-config');
-const e = require('connect-flash');
+// Call the initialize passport function from passport-config.js
 initializePassport(passport, 
   email => users.find(user => user.email === email),
   id => users.find(user => user.id === id))
@@ -38,8 +38,7 @@ app.use(passport.session())
 
 
 
-
-let db = new sqlite3.Database('./db/grantstest.db', (err) => {
+let db = new sqlite3.Database('./db/example1.db', (err) => {
   if (err) {
     return console.error(err.message);
   };
@@ -47,10 +46,10 @@ let db = new sqlite3.Database('./db/grantstest.db', (err) => {
 });
 
 
-app.post('/api/:grantid', (request, response) => {
-  const params = request.params
+app.post('/api/:grantid', (req, res) => {
+  const params = req.params
   console.log(params);
-  const data = request.body;
+  const data = req.body;
   console.log(data);
   let sql;
   if (params.grantid != 'null') {
@@ -68,36 +67,36 @@ app.post('/api/:grantid', (request, response) => {
   });
   //db.close();
   console.log('The database has been closed.');
-  response.status(200).send();  
+  res.status(200).send();  
 });
 
 
-app.get('/', (request, response) => {
-  response.render('index');
+app.get('/', (req, res) => {
+  res.render('index');
 });
 
 
-app.get('/options', (request, response) => {
+app.get('/options', (req, res) => {
   sql = `SELECT * FROM status ORDER BY status`;
   db.all(sql, {}, (err, data) => {
     if (err) {
-    response.end();
+    res.end();
     console.log("Error!");
     return;
   } else {
-    response.json(data);
+    res.json(data);
     console.log(data);
     };
   });
 });
 
-app.get('/grants', (request, response) => {
-  response.render('table');
+app.get('/grants', (req, res) => {
+  res.render('table');
 });
 
 
-app.get('/grants/data/:sortBy', (request, response) => {
-  const sorter = request.params;
+app.get('/grants/data/:sortBy', (req, res) => {
+  const sorter = req.params;
   let sql;
   if (sorter.sortBy === "received"){ 
     sql = `SELECT rowid,
@@ -127,20 +126,20 @@ app.get('/grants/data/:sortBy', (request, response) => {
   console.log(sql)
   db.all(sql, {}, (err, data) => {
     if (err) {
-      response.end();
+      res.end();
       console.log("Error retrieving table data.");
       return;
     } else {
-      // response.json(data);
-      response.json(data);
+      // res.json(data);
+      res.json(data);
       console.log(data);
     };
   });
 });
 
 
-app.get(`/grant/:grantid`, (request, response) => {
-  const data = request.params;
+app.get(`/grant/:grantid`, (req, res) => {
+  const data = req.params;
   const sql = `SELECT COALESCE(title, "") AS grant,
         COALESCE(status, "") AS status,
         COALESCE(due_date, "") AS due_date,
@@ -153,48 +152,50 @@ app.get(`/grant/:grantid`, (request, response) => {
         WHERE rowid = ${data.grantid}`;
   db.get(sql, (err, data) => {
     if (err) {
-      response.end();
+      res.end();
       console.log("Error retrieving table data.");
       return;
     } else {
-      response.json(data);
+      res.json(data);
       console.log(data);
     };
   });
 });
 
-app.get('/login', (request, response) => {
-  response.render('login.ejs');
+app.get('/login', (req, res) => {
+  res.render('login.ejs');
 });
 
-app.get('/register', (request, response) => {
-  response.render("register.ejs");
+app.get('/register', (req, res) => {
+  res.render("register.ejs");
 
 });
 
+// TODO: Make login work with DB
 app.post('/login', passport.authenticate('local', {
   successRedirect: '/grants',
   failureRedirect:'/login',
   failureFlash: true
-},
-console.log("Authenticating...")))
+}))
 
-app.post('/register', async (request, response) => {
+app.post('/register', async (req, res) => {
   try {
-    const hashedPassword = await bcrypt.hash(request.body.password, 10)
-    users.push({
-      id: Date.now().toString(),
-      name: request.body.name,
-      email: request.body.email,
-      password: hashedPassword
-    })  
-    response.redirect('/login')
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+    const uniqueId = new Date()
+    let data = [uniqueId, req.body.email, hashedPassword] 
+    console.log(data)
+    let sql = `INSERT INTO users(user_id, email, password) VALUES(?, ?, ?)`;
+    db.run(sql, data, (err) => {
+      if (err) {
+        return console.error(err.message);
+      }
+    });
+    res.redirect('/login')
   } catch {
-    response.redirect('/register')
+    res.redirect('/register')
   }
   console.log(users)
 });
-
 
 app.listen(3000, () => console.log('listening at 3000'))
 

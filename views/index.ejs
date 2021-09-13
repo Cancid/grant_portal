@@ -13,11 +13,13 @@
   </head>
   
   <body>
-
     <div class="container">
 
       <div class="row">
         <h1 id ="granttype">New Grant</h1>
+      </div>
+    
+      <div class ="row">
         <div class="input-field col s12 l6">
           <input id="name" type="text" class="validate" required>
           <label for="name">Grant Title</label>
@@ -29,8 +31,7 @@
           </select>
           <label for="status">Grant Status</label>
         </div>
-          
-
+  
       </div> <!--CLOSE ROW --> 
 
       <div class="row">
@@ -97,7 +98,12 @@
         </div> <!-- CLOSE ROW -->
 
         <div class="row">
-        <button id="btn" class="btn waves-effect waves-light blue darken-3" type="submit" name="action">Submit<i class="material-icons right">send</i></button>
+          <div class="col s3">
+            <button id="submit" class="btn waves-effect waves-light blue darken-3" type="submit" name="action">Submit<i class="material-icons right">send</i></button>
+          </div>
+          <div class="col s3 offset-s4">
+            <button id="delete" class="btn waves-effect red lighten-1" type="submit" name="action"><i class="material-icons">delete</i></button>
+          </div>
       </div> <!-- CLOSE ROW -->
     
     </div> <!-- CLOSE CONTAINER -->

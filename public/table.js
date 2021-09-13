@@ -2,10 +2,13 @@ let data;
 
 document.addEventListener('DOMContentLoaded', function() {
 
+    // Create new grant button
     const grantButton = document.getElementById('floating-button');
     const initGrantButton = M.FloatingActionButton.init(grantButton);
     grantButton.addEventListener("click", () => window.location.href = 'http://localhost:3000/')
   
+    
+    // Sort table by status setup and method
     let sortButtons = document.querySelectorAll("button")
     sortButtons.forEach(sortButton => sortButton.addEventListener("click", () => {
       sortButtons.forEach(sortButton => { sortButton.classList.remove("red", "lighten-1");   
@@ -19,26 +22,29 @@ document.addEventListener('DOMContentLoaded', function() {
         sortButton.classList.add("red", "lighten-1");
         sortButtons.forEach(sortButton => sortButton.value = "disabled");
         sortButton.value = "enabled";
-      }
-  ;}));
+      };
+    }));
+
     
-    
+    //Get table with all results, then get "due soon" notifications
     getTable("all").then((data) => setNotifications(data));
     async function getTable(sortBy) {
       const response = await fetch(`/grants/data/${sortBy}`)
       data = await response.json();
     
       const tbod = document.getElementById("tbod");
+      // Delete the table when created new sorted or unsorted table
       while (tbod.firstChild) {
         tbod.removeChild(tbod.firstChild)
       };
-      idNum = 0;
+
+      // Creat a row for the data and assign it the SQLite's rowid
       for (ele of data) {
         const row = document.createElement("tr");
         row.classList.add("row");
-        row.id = "row-" + idNum;
+        row.id = "row-" + ele.rowid;
         
-
+        // Create the columns for the rows
         function makeRows(data) {
           let col = document.createElement("td");
           col.textContent = data;
@@ -46,44 +52,46 @@ document.addEventListener('DOMContentLoaded', function() {
         
         };
 
+        // Make columns for each rows data
         Object.values(ele).forEach(makeRows);  
         tbod.appendChild(row);
+        // Make new variable otherwise JS copies the pointer not the value
+        const newId = ele.rowid
         row.addEventListener("click", function(){
-          window.location.href = `http://localhost:3000/?grantid=${ele.rowid}`
+          window.location.href = `http://localhost:3000/?grantid=${newId}`
         });
-
-        idNum++;
-
       };
 
       return data
       
     };
 
+    // Create the "due soon" notifications
     function setNotifications(data){
-      console.log(data)
       const today = new Date()
       for (grant of data){
-        let curId = grant.rowid;
-        let date = new Date(grant.due_date)
+        const curId = grant.rowid;
+        const date = new Date(grant.due_date)
         const daysLeft = Math.round(Math.abs(date - today)/(1000 * 3600 *24))
+
         if (daysLeft <= 4) {
+
            const notify =  document.getElementById("notifications");
            const notification = document.createElement("a");
            notification.setAttribute("href", `http://localhost:3000/?grantid=${curId}`);
            notification.classList.add("collection-item");
-           if (daysLeft === 0) {
-                notification.textContent = `${ele.grant} is due today!`
-           } else {
-                notification.textContent = `${ele.grant} is due in ${daysLeft} days!`;
-           };
+
+            (daysLeft === 0) ?
+              notification.textContent = `${ele.grant} is due today!`
+            : notification.textContent = `${ele.grant} is due in ${daysLeft} days!`;
+
            notify.appendChild(notification);
         };
       };
     };
     
     
-    // TODO: BUG: Have to press the header twice for it to sort first time after each button sort.
+
     //Sorting code
     const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
     const sortNumOrString = (v1, v2) => v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ? v1 - v2 : v1.toString().localeCompare(v2)

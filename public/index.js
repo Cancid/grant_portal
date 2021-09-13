@@ -16,7 +16,8 @@ document.addEventListener('DOMContentLoaded', function() {
   const datePicker = document.querySelectorAll('.datepicker');
   const dateInstances = M.Datepicker.init(datePicker, {minDate: new Date(), format: 'mm/dd/yyyy'});
   M.updateTextFields();
-  document.getElementById("btn").addEventListener("click", btnClickAct);
+  document.getElementById("submit").addEventListener("click", btnClickAct);
+  document.getElementById("delete").addEventListener("click", deleteGrant);
 
   getOptions()
   async function getOptions() {
@@ -62,10 +63,10 @@ document.addEventListener('DOMContentLoaded', function() {
           console.log(s.options[i])
           if (s.options[i].value === valsearch){
             s.options[i].selected = true;
-            if (status.value === 'Recieved'){
+            if (status.value === 'Received'){
               displayCheck(document.getElementById('intcheck'), 'interim');
-                displayOption(document.getElementById('status'));
-                document.getElementById('intcheckbox').setAttribute('checked', 'checked');
+              displayOption(document.getElementById('status'));
+              document.getElementById('intcheckbox').setAttribute('checked', 'checked');
             };  
             console.log(s)
             break;
@@ -147,7 +148,7 @@ function displayOption(that) {
   let interim =  document.getElementById("interim")
   let intCheck = document.getElementById("intcheck")
 
-  if (that.value == "Recieved") {
+  if (that.value == "Received") {
     rec.style.display = "block";
     finalRep.style.display = "block";
     intCheck.style.display = "block";
@@ -189,3 +190,8 @@ function displayCheck(that, id) {
       
     };
 };
+
+async function deleteGrant() {
+  await fetch(`/delete/${grantid}`);
+  window.location.href = '/grants'
+}

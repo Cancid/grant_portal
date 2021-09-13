@@ -184,6 +184,18 @@ app.get(`/grant/:grantid`, (req, res) => {
   });
 });
 
+
+app.get(`/delete/:grantid`, (req, res) => {
+  const data = req.params
+  db.run(`DELETE FROM grants WHERE rowid = ${data.grantid}`, (err) => {
+    if (err) {
+      return console.log("Error deleting grant");
+    };
+  });
+  res.redirect('/grants');
+});
+
+
 app.get('/login', (req, res) => {
   res.render('login.ejs');
 });

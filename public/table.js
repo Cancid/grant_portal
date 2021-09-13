@@ -1,6 +1,10 @@
 let data;
 
 document.addEventListener('DOMContentLoaded', function() {
+
+    const grantButton = document.getElementById('floating-button');
+    const initGrantButton = M.FloatingActionButton.init(grantButton);
+    grantButton.addEventListener("click", () => window.location.href = 'http://localhost:3000/')
   
     let sortButtons = document.querySelectorAll("button")
     sortButtons.forEach(sortButton => sortButton.addEventListener("click", () => {

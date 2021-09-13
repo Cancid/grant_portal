@@ -31,6 +31,8 @@ document.addEventListener('DOMContentLoaded', function() {
       const option = document.createElement("option");
       option.textContent = ele.status;
       option.value = ele.status;
+      option.id = ele.status;
+      console.log(option.id);
       status.appendChild(option);
     M.FormSelect.init(selectBoxes);
     };

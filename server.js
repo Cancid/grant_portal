@@ -46,53 +46,40 @@ app.use(passport.session())
 const initializePassport = require('./passport-config');
 // Call the initialize passport function from passport-config.js
 
-async function getUser(email) {
-  console.log("ran function")
-  let sql = `SELECT email, password FROM users WHERE email = "${email}"`;
-  let returnRows = null;
-  return new Promise(function(res, rej){
-    db.all(sql, [], (err, rows) => {
+async function getUser(email = null, id = null) {
+  let sql;
+  try {
+    email ? sql = `SELECT user_id, email, password FROM users WHERE email = "${email}"`
+    : sql = `SELECT user_id WHERE user_id = "${id}"`;
+  } catch {
+    return null;
+  }
+  return new Promise(function(res, rej) {
+    db.get(sql, [], (err, row) => {
       if (err) {
         return rej(err);
       }
-      console.log("Query")
+      console.log(row)
       db.close();
-      res(rows[0]);
-    })});
-  };
+      res(row);
+    });
+  });
+};
  
-
-
-//   db.all(sql, [], (err, rows) => {
-//     if (err) {
-//       throw err;
-//     };
-//     console.log("Data:", rows)
-//     returnRows = rows
-//     });
-//     return returnRows;
-// };
-
+   
 initializePassport(passport, 
   email => getUser(email),
-  id => users.find(user => user.id === id))
-
+  id => getUser(id));
 
 
 // If new grant, insert it into the table, if editing a current grant, update that grant
 app.post('/api/:grantid', (req, res) => {
   const params = req.params
-  console.log(params);
   const data = req.body;
-  console.log(data);
   let sql;
-  if (params.grantid != 'null') {
-    sql = `UPDATE grants SET title = ?, status = ?, due_date = ?, amount_requested = ?, amount_recieved = ?, duration = ?, final_report = ?, interim_report = ? WHERE rowid = ${params.grantid}`;
-  } else {
-    console.log("Inserting new grant...")
-    sql = `INSERT INTO grants(title, status, due_date, amount_requested, amount_recieved, duration, final_report, interim_report) VALUES(?, ? ,? ,? ,? ,?, ?, ?)`;
-  };
-  console.log(sql);
+  params.grantid != 'null' ?
+    sql = `UPDATE grants SET grant = ?, status = ?, due_date = ?, amount_req = ?, amount_rec = ?, duration = ?, final_report = ?, interim_report = ? WHERE rowid = ${params.grantid}`
+    : sql = `INSERT INTO grants(grant, status, due_date, amount_req, amount_rec, duration, final_report, interim_report) VALUES(?, ? ,? ,? ,? ,?, ?, ?)`;
   db.run(sql, data, function(err) {
     if (err) {
       return console.log(err.message);
@@ -131,27 +118,28 @@ app.get('/grants', (req, res) => {
 
 app.get('/grants/data/:sortBy', (req, res) => {
   const sorter = req.params;
+  console.log(sorter.sortBy);
   let sql;
-  if (sorter.sortBy === "received"){ 
+  if (sorter.sortBy != "all"){ 
     sql = `SELECT rowid,
-      COALESCE(title, "") AS grant,
+      COALESCE(grant, "") AS grant,
       COALESCE(status, "") AS status,
       COALESCE(due_date, "") AS due_date,
-      COALESCE(amount_requested, "") AS amount_requested,
-      COALESCE(amount_recieved, "") AS amount_received,
+      COALESCE(amount_req, "") AS amount_requested,
+      COALESCE(amount_rec, "") AS amount_received,
       COALESCE(duration, "") AS duration,
       COALESCE(interim_report, "") AS interim_report,
       COALESCE(final_report, "") AS final_report
       FROM grants
-      WHERE status='Recieved'`;
+      WHERE status= "${sorter.sortBy}"`;
   }
   else {
     sql = `SELECT rowid,
-      COALESCE(title, "") AS grant,
+      COALESCE(grant, "") AS grant,
       COALESCE(status, "") AS status,
       COALESCE(due_date, "") AS due_date,
-      COALESCE(amount_requested, "") AS amount_requested,
-      COALESCE(amount_recieved, "") AS amount_received,
+      COALESCE(amount_req, "") AS amount_requested,
+      COALESCE(amount_rec, "") AS amount_received,
       COALESCE(duration, "") AS duration,
       COALESCE(interim_report, "") AS interim_report,
       COALESCE(final_report, "") AS final_report
@@ -174,11 +162,11 @@ app.get('/grants/data/:sortBy', (req, res) => {
 
 app.get(`/grant/:grantid`, (req, res) => {
   const data = req.params;
-  const sql = `SELECT COALESCE(title, "") AS grant,
+  const sql = `SELECT COALESCE(grant, "") AS grant,
         COALESCE(status, "") AS status,
         COALESCE(due_date, "") AS due_date,
-        COALESCE(amount_requested, "") AS amount_requested,
-        COALESCE(amount_recieved, "") AS amount_received,
+        COALESCE(amount_req, "") AS amount_requested,
+        COALESCE(amount_rec, "") AS amount_received,
         COALESCE(duration, "") AS duration,
         COALESCE(interim_report, "") AS interim_report,
         COALESCE(final_report, "") AS final_report
@@ -205,7 +193,7 @@ app.get('/register', (req, res) => {
 
 });
 
-// TODO: Make login work with DB
+// If login successful redirect to grant table, otherwise redirect back to login
 app.post('/login', passport.authenticate('local', {
   successRedirect: '/grants',
   failureRedirect:'/login',

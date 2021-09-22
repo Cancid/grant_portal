@@ -14,25 +14,32 @@
   <body>
 
     <div class="container">
-      <div id ="floating-button" class="fixed-action-btn">
-        <a class="btn-floating btn-large red">
-          <i class="large material-icons">mode_edit</i>
-        </a>
-      </div>
-      
-      <h1>Grants</h1>
       <div class="row">
+        
+        <div class="col s9">
+          <h1>Grants</h1></div>
+        <div class="col s3">
+          <button id="logout" class="btn waves-effect waves-light blue darken-3" type="submit" name="action">Logout</button>
+        </div>
+      </div>
+        <div class="row">
         <div class = "col s12">
           <div id="notifications" class="collection">
           </div>
         </div>
       </div>
       <div class="row">
-          <button id="Received" class="waves-effect waves-light btn-large" type="submit" name="action" value="disabled">Received</button>
-          <button id="Applied" class="waves-effect waves-light btn-large" value="disabled">Applied</button>
-          <button id="Need to apply" class="waves-effect waves-light btn-large" style="font-size:small" class="font" value="disabled">Need to Apply</button>
-          <button id="Rejected" class="waves-effect waves-light btn-large" value="disabled">Rejected</button>   
-      <br><br>
+          <div class="col s9">
+            <button id="Received" class="waves-effect waves-light btn-large sort" type="submit" name="action" value="disabled">Received</button>
+            <button id="Applied" class="waves-effect waves-light btn-large sort" value="disabled">Applied</button>
+            <button id="Need to apply" class="waves-effect waves-light btn-large sort" style="font-size:small" class="font" value="disabled">Need to Apply</button>
+            <button id="Rejected" class="waves-effect waves-light btn-large sort" value="disabled">Rejected</button>   
+          </div>
+          <div class="col s1 offset-s2">
+            <button id="newgrant" class="btn-floating btn-large red" type="submit" name="action"><i class="large material-icons">mode_edit</i></button>
+          </div>
+      </div>
+      <br>
       <div class="row">
          <div class="col s12">
           <table id="grants" class="highlight">

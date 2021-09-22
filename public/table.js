@@ -2,14 +2,20 @@ let data;
 
 document.addEventListener('DOMContentLoaded', function() {
 
+    const logoutButton = document.getElementById('logout');
+    logoutButton.addEventListener("click",
+      async () => {
+      await fetch("/logout");
+      location.href = '/login';
+    });
+
     // Create new grant button
-    const grantButton = document.getElementById('floating-button');
-    const initGrantButton = M.FloatingActionButton.init(grantButton);
+    const grantButton = document.getElementById('newgrant');
     grantButton.addEventListener("click", () => window.location.href = 'http://localhost:3000/')
   
     
     // Sort table by status setup and method
-    let sortButtons = document.querySelectorAll("button")
+    let sortButtons = document.querySelectorAll("button.sort")
     sortButtons.forEach(sortButton => sortButton.addEventListener("click", () => {
       sortButtons.forEach(sortButton => { sortButton.classList.remove("red", "lighten-1");   
       });

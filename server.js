@@ -71,6 +71,15 @@ initializePassport(passport,
   email => getUser(email),
   id => getUser(id));
 
+app.post('/auth/google',
+passport.authenticate('google', { scope: ['https://www.googleapis.com/auth/plus.login'] }));
+
+app.get('/auth/google/callback', 
+  passport.authenticate('google', { failureRedirect: '/login' }),
+  function(req, res) {
+    res.redirect('/');
+  });
+
 
 // If new grant, insert it into the table, if editing a current grant, update that grant
 app.post('/api/:grantid', (req, res) => {
@@ -101,9 +110,9 @@ app.get('/options', (req, res) => {
   sql = `SELECT * FROM status ORDER BY status`;
   db.all(sql, {}, (err, data) => {
     if (err) {
-    res.end();
-    console.log("Error!");
-    return;
+      res.end();
+      console.log("Error!");
+      return;
   } else {
     res.json(data);
     console.log(data);
@@ -230,6 +239,22 @@ app.post('/register', async (req, res) => {
   }
   console.log(users)
 });
+
+app.get('/auth/google',
+  passport.authenticate('google', { scope: ['profile'] }));
+
+app.get('/auth/google/callback', 
+  passport.authenticate('google', { failureRedirect: '/login' }),
+  function(req, res) {
+    // Successful authentication, redirect home.
+    res.redirect('/grants');
+  });
+
+app.get('/logout', function(req, res){
+  req.logout();
+  res.end()
+});
+
 
 app.listen(3000, () => console.log('listening at 3000'))
 

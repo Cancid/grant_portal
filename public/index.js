@@ -129,15 +129,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const response = await fetch(`/api/${grantid}`, options);
     console.log(response.status);
     
-    title.value = "";
-    status.value = "";
-    dueDate.value = "";
-    amountReq.value = "";
-    amountRec.value = "";
-    duration.value = "";
-    finalRep.value = null;
-    intDate.value = null;
-    M.updateTextFields();
+    location.href = `http://localhost:3000/grants`
   };
 });
 

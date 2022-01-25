@@ -9,9 +9,10 @@ Google suite connectivity for login and calendar syncing
 
 Completed:
 Grant tracking and forms
+Google Login
 
 Under construction:
-Secure login and google login
+Secure login w/ JWT
 
 To-Do:
 Google suite connectivity
